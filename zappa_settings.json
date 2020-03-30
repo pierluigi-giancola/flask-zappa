@@ -1,0 +1,32 @@
+{
+    "dev": {
+        "aws_environment_variables": {"FLASK_ENV": "dev"},
+        "app_function": "app.app",
+        "aws_region": "eu-west-1",
+        "profile_name": "default",
+        "project_name": "blink-delivery",
+        "runtime": "python3.6",
+        "s3_bucket": "blink-delivery",
+        "slim_handler": true
+    },
+    "staging": {
+        "aws_environment_variables": {"FLASK_ENV": "staging"},
+        "app_function": "app.app",
+        "aws_region": "eu-west-1",
+        "profile_name": "default",
+        "project_name": "blink-delivery",
+        "runtime": "python3.6",
+        "s3_bucket": "blink-delivery",
+        "slim_handler": true
+    },
+    "prod": {
+        "aws_environment_variables": {"FLASK_ENV": "prod"},
+        "app_function": "app.app",
+        "aws_region": "eu-west-1",
+        "profile_name": "default",
+        "project_name": "blink-delivery",
+        "runtime": "python3.6",
+        "s3_bucket": "blink-delivery",
+        "slim_handler": true
+    }
+}
