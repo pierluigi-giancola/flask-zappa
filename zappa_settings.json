@@ -7,17 +7,21 @@
         "project_name": "blink-delivery",
         "runtime": "python3.6",
         "s3_bucket": "blink-delivery",
-        "slim_handler": true
+        "slim_handler": true,
+        "cors": true
     },
     "staging": {
         "aws_environment_variables": {"FLASK_ENV": "staging"},
+        "apigateway_description": "Blink Delivery Staging",
+        "lambda_description": "Blink Delivery Staging",
         "app_function": "app.app",
         "aws_region": "eu-west-1",
         "profile_name": "default",
         "project_name": "blink-delivery",
         "runtime": "python3.6",
         "s3_bucket": "blink-delivery",
-        "slim_handler": true
+        "slim_handler": true,
+        "cors": true
     },
     "prod": {
         "aws_environment_variables": {"FLASK_ENV": "prod"},
@@ -27,6 +31,7 @@
         "project_name": "blink-delivery",
         "runtime": "python3.6",
         "s3_bucket": "blink-delivery",
-        "slim_handler": true
+        "slim_handler": true,
+        "cors": true
     }
 }

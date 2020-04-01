@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify, g
 from utils.auth import protected
 from routes import routes
 from mongoengine import connect
+from flask_cors import CORS
 import jwt
 
 app = Flask(__name__)
 app.config.from_object('config.{}'.format(app.config['ENV']))
+CORS(app=app)
 config = app.config
 
 connect(host=app.config['MONGODB_SETTINGS']['host'])
