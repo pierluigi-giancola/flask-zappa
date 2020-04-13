@@ -2,7 +2,7 @@
 
 > Quando incontrate problemi, spendete qualche ora su Google a per risolvere e alla fine riuscite investite 10 minuti per ampliare questo README in modo che chi avrà i vostri stessi problemi non dovra perderci le ore, Grazie.
 
-Strutture del progetto:
+## Struttura del progetto:
 
 ### Pipfile
 
@@ -57,7 +57,7 @@ Diviso in classi [link](https://flask.palletsprojects.com/en/1.1.x/config/#devel
 File di configurazione di zappa, il tool che permette il deploy di tutto su AWS con poco effort.
 Per dettagli [link](https://github.com/Miserlou/Zappa#advanced-settings)
 
->**IMPORTANTE**: Ricordatevi di cambiare la proprietà project_name e s3_bucket
+>**IMPORTANTE: Ricordatevi di cambiare le proprietà _project_name_ e _s3_bucket_ in modo che rispecchino il vostro progetto. Cambiate anche le varie descrizioni (lambda_description e apigateway_description)**
 
 ### app.py
 
@@ -67,6 +67,8 @@ Espone un Endpoint:
 
 E mappa tutte le funzioni definite nei file della folder 'routes' in Endpoint
 
+**L'idea è che non dobbiate toccare questo file per poter sviluppare il vostro microservizio**
+
 # Folder del Progetto
 
 ### models
@@ -75,17 +77,34 @@ All'interno di questa folder vanno creati tutti i Documenti MongoDB.
 I Document sono classi Python che forniscono un schema per i Document, in modo da forzare uno schema per un database che sarebbe schemaless.
 **Un solo file per Document come convenzione**
 
+### controllers
+
+In questa cartella sono presenti i controllers dei models, quindi funzioni Python che incapsulano la business logic, da una semplice _query_ a mandare mail/notifiche ecc. ecc.
+**Un file ..._controller.py per ogni file model**
+
+### routes
+
+In questa cartella sono presenti le routes in cui esporre i controllers.
+Questa cartella è un po' particolare nel senso che ha delle **importanti regole** da seguire:
+1. Assolutamente **vietato** importare le funzioni tramite costrutto _from ... import ..._ es:```from controllers.qualcosa_controller import get_qualcosa```. Per importarle usare invece ```import controllers.qualcosa_controller as controller```
+2. Scrivere solo **funzioni che ritornano istanze di oggetti Route**. Se si ha la necessità di scrivere una funzione di utility metterla nel package delle utility o in una folder dentro routes.
+
+Rispettando queste 2 regole riuscirete a creare delle route in men che non si dica!
+
+_Per chi volesse curiosare può aprire il file \_\_init\_\_.py di routes per scoprire che cosa succede dietro le quinte._
+
+### utility
+
+non c'è bisogno di spiegare a cosa serve
+
 # Lavorare al progetto in locale
 
-Processi per lanciare l'app in locale ecc.
+## Workflow
 
-### dev
-
-Purtroppo non sono riuscito a trovare un modo decente per lavorare bene in locale. Vanno cambiati continuamente gli hook del bot di telegram a mano e ogni tanto il servizio si blocca va riavviato e risettati i webhook.
-
-Per settare l'hook chiamare:
-
-*https://api.telegram.org/bot{TOKEN}/setWebhook?url={URL_PUBBLICO}/{TOKEN}*
+1. Definisco i miei dati nella folders _models_
+2. Definisco i miei controllers nella folders _controllers_. Questi utilizzano i _models_ definiti precedentement
+3. Definisco le routes come funzioni nella folder _routes_ le quali usano i controllers.
+4. Lancio il server di Flask per vedere che tutto funzioni
 
 per lanciare l'applicazione in locale:
 
@@ -99,70 +118,17 @@ dovrebbe uscire qualcosa tipo così:
 ```sh
 * Environment: dev
 * Debug mode: off
-* Telegram TOKEN: 1131844599:AAEEbz3VCCJYqOZDZ12URii4Yzflagnpwko
 * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 * Restarting with stat
 * Debugger is active!
 * Debugger PIN: 247-025-819
 ```
 
-Running on è l'indirizo che dobbiamo esporre.
-
-L' API Telegram Webhooks accetta solo HTTPS. Risulta quindi necessario utilizzare un servizio di *tunneling*. Uno semplice e versatile è ```ngrok```.
-
-#### 1. Scaricare ```ngrok```
-
-Scaricare ```ngrok``` dal sito (https://ngrok.com/) e creare un account
-
-#### 2. Estrarre il contenuto del file ```.zip```
-
-Estrarre il contenuto del file ```.zip``` scaricato in una cartella a piacere. Per facilità di utilizzo è consigliabile unzipparlo nelle directory seguenti:
-
-* *Windows*:			```C:\Users\username```
-* *Linux/MacOS*:		```/bin```
-
-#### 3. Connettere il proprio account a ```ngrok```
-
-Navighiamo fino alla directory dove abbiamo estratto ```ngrok```, apriamo una nuova shell ed eseguiamo il comando:
-
-```sh
-./ngrok authtoken <auth_token>
-```
-
-#### 4. Lanciare ```ngrok```
-
-Navighiamo fino alla directory dove abbiamo estratto ```ngrok```, apriamo una nuova shell ed eseguiamo il comando:
-
-```sh
-ngrok http 5000
-```
-
-Dovrebbe venirci fuori qualcosa del genere:
-
-![picture](img/ngrok_tutorial.png)
-
-In rosso è evidenziato l'indirizzo pubblico HTTPS che dovremmo sostituire a ```{URL_PUBBLICO}``` quando settiamo il Webhook. Quindi per settare il Webhook chiamare:
-
-https://api.telegram.org/bot```{TOKEN}```/setWebhook?url=```{URL_PUBBLICO}```/```{TOKEN}```
-
-sostituendo a ```{TOKEN}``` il token del nostro chat bot e a ```{URL_PUBBLICO}``` l'URL https appena ottenuto da ```ngrok```
-
-#### URL per settare i Webhooks dei nostri Chat Bot:
-
-Di seguito gli URL con i ```{TOKEN}``` già inseriti e cui settare i Webhook per i nostri 2 Chat Bot. L'unica cosa da sostituire rimane ```{URL_PUBBLICO}```:
-
-* *Blink Dev Bot* (@blink_dev_bot):
-
-  https://api.telegram.org/bot1048038318:AAGpW0y3m1NV3_1zIE0Izd-k929Wp8eMIAA/setWebhook?url=```{URL_PUBBLICO}```/1048038318:AAGpW0y3m1NV3_1zIE0Izd-k929Wp8eMIAA
-
-* *Blink Bot* (@blink_lastmile_bot): 
-
-  https://api.telegram.org/bot1075680593:AAHeuweSpNw_krSR9P5bIboiEj0qZiNFvR8/setWebhook?url=```{URL_PUBBLICO}```/1075680593:AAHeuweSpNw_krSR9P5bIboiEj0qZiNFvR8
-
+Running on è l'indirizo dal quale possiamo testare (usando ad esempio [Postman](https://www.postman.com/)) che le route e i controller che abbiamo creato funzionino
 
 # Deploy del Progetto con Zappa
 
-Per poter utilizzare Zappa dovrete aver installato e settato aws-cli nel vostro PC.
+Per poter utilizzare Zappa dovrete aver **installato e settato aws-cli** (istruzioni più sotto) nel vostro PC.
 Il deploy in zappa è easy peasy.
 ```sh
 zappa deploy [AMBIENTE]
