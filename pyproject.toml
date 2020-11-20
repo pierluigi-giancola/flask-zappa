@@ -1,0 +1,6 @@
+[tool.black]
+target-version=['py38']
+skip-string-normalization=true # don't touch single quotes
+line-length=99
+[tool.isort]
+line_length=99

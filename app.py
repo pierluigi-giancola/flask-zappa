@@ -1,20 +1,18 @@
-from flask import Flask, request, jsonify, g
-from utils.auth import protected
-from routes import routes
-from mongoengine import connect
+from flask import Flask, g, jsonify, request
 from flask_cors import CORS
-import jwt
+
+from routes import routes
 
 app = Flask(__name__)
 app.config.from_object('config.{}'.format(app.config['ENV']))
 CORS(app=app)
 config = app.config
 
-connect(host=app.config['MONGODB_SETTINGS']['host'])
 
 @app.route('/')
 def rootcheck():
-    return '<h1>{}-{}</h1>'.format(config['PROJECT_NAME'] ,config['ENV'])
+    return '<h1>{}-{}</h1>'.format(config['PROJECT_NAME'], config['ENV'])
+
 
 for route in routes:
     route().register(app)
